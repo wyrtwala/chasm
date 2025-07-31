@@ -1,11 +1,5 @@
-#1 fix rax
-#2 fix rbx
-#3 fix rcx
-#4 fix rdx
-#B? fix rbp
-#S? fix rsp
-$arg1? fix rsi
-$arg2? fix rdi
+$a fix rsi
+$b fix rdi
 $1 fix r8
 $2 fix r9
 $3 fix r10
