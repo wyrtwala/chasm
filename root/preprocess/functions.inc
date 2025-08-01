@@ -1,16 +1,16 @@
-macro funcion name {
-label name:
+macro funcion name* {
+name:
     push ebp
     mov ebp, esp
 }
 
-macro end-function {
+macro end-function* {
     mov esp, ebp
     pop ebp
     ret
 }
 
-macro pp-funcion name {
+macro pp-funcion name* {
 name {
 }
 
