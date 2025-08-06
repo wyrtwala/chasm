@@ -9,9 +9,3 @@ macro end-function* {
     pop ebp
     ret
 }
-
-macro pp-funcion name* {
-name {
-}
-
-end-pp-funcion fix }
