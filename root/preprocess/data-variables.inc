@@ -1,6 +1,6 @@
-macro data name*, string* {
+macro data-string name*, string* {
   if used name
     name dq string, 0
-    name.length equ $-string
+    name.length equ $ - string
   end if
 }
