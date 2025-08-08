@@ -1,6 +1,5 @@
-macro data-string name*, string* {
-  if used name
-    name dq string, 0
-    name.length equ $ - string
-  end if
-}
+.macro data-string name*, string* 
+    name: 
+        .asciz string
+        \name.length equ $ - string
+.endm
