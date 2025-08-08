@@ -10,7 +10,7 @@
 .equ $8, r15
 
 .macro returnto
-\n\t return_to_macro
+  \n\t return_to_macro
 .endm
 
 .macro return_to_macro variable
