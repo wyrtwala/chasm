@@ -1,6 +1,6 @@
 heap:
 
-heap.allocate:
+.allocate:
   push ebp
   mov ebp, esp
   ;allocate
@@ -9,13 +9,11 @@ heap.allocate:
   mov rax, ;pointer
   ret
 
-heap.move
-  ;put _ into allocated memory
+.move:
   mov rax, ;pointer
   ret
   
-heap.hook
-  ;realloc and concatenate two strings onto heap
+.hook:
   mov rax, ;pointer
   ret
 
