@@ -2,6 +2,7 @@
 .define bloodhound.inc
 
 .data
+
 bloodhound.pointer:
   .octa ? 
 bloodhound.pointer.count:
