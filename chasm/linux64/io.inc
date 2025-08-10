@@ -1,6 +1,8 @@
 io:
 
 macro cli.read.line: buffer*, max_length {
+  push r15
+  xor rax, rax
   xor r15, r15
   local cli_read_line_loop:
   cmp r15, max_length
@@ -11,6 +13,7 @@ macro cli.read.line: buffer*, max_length {
   jne cli_read_line_loop
   local cli_read_line_end:
   mov rax, buffer
+  pop r15
   ret
   
 
@@ -20,6 +23,7 @@ cli_read_char:
   xor rax, rax
   xor rdi, rdi
   mov rdx, 1
+  syscall
   mov rax, rsi
   ret
 
