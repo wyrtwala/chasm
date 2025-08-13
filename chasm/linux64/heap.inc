@@ -1,4 +1,4 @@
-macro heap.claim size* {
+macro heap.request size* {
   mov rax, 9               ; mmap
   mov rdi, 0               ; allocate wherever
   mov rsi, size            ; size in bytes
