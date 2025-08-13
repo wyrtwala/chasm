@@ -1,36 +1,43 @@
-io:
+macro cli.read.char buffer{
+  stack rbp rax rdx rdi  rsi
+  mov rbp, rsp
+  xor rax, rax                           ; read
+  mov rdx, 1                             ; one char (32bits?)
+  xor rdi, rdi                           ; stdin
+  lea rsi, [buffer]                      ; read buffer
+  syscall   
+  mov rsp, rbp
+  unstack rbp rax rdx rdi rsi
+}  
 
-;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-macro cli.read.char {
-  xor rax, rax
-  xor rdi, rdi
-  mov rdx, 1
+macro cli.read.line: buffer*, max_length=1024 {
+  stack rbp rax rdx rdi rsi r15          ; save rxx in case they
+  mov rbp, rsp                           ; are being used
+  xor rax, rax                           ; read
+  mov rdx, 1                             ; one char (32bits?)
+  xor rdi, rdi                           ; stdin
+  xor r15, r15                           ; counter
+  local cli_read_line_loop:              ; loop back label
+  lea rsi, [buffer + r15]                ; read buffer (check syntax)
+  cmp r15, max_length                    ; check length
+  jge cli_read_line_end                  ; end macro if too long
   syscall
-  mov rax, rsi
-  ret
-}
-macro cli.read.line: buffer*, max_length {
-  push r15
-  xor rax, rax
-  xor r15, r15
-  local cli_read_line_loop:
-  cmp r15, max_length
-  je cli_read_line_end
-  call cli.read.char
-  mov [buffer + r15], rax
-  cmp rax, "\n"
-  jne cli_read_line_loop
-  local cli_read_line_end:
-  mov rax, buffer
-  pop r15
-  ret
-}
+  cmp rsi, 10                            ; check for line feed
+  jne cli_read_line_loop                 ; repeat
+  local cli_read_line_end:               ; cancel label
+  mov rsp, rbp
+  unstack rbp rax rdx rdi rsi r15
+}  
+
 macro cli.write.char chartowrite* {
-  mov rax, 1
-  mov rdx, 1
-  mov rsi, chartowrite
+  mov rax, 1                      ; write
+  mov rdi, 1                      ; stdout
+  mov rdx, 1                      ; one char (32bits?)
+  mov rsi, chartowrite            ; load char (check syntax)
   syscall
 }
+
+;------------------------------------------------------------------------------------------------continue checking----------------------------------------------------------------------------------------------------------------
 macro cli.write.string string*, max_length {
   push r14 r15
   xor rax, 1
@@ -48,7 +55,6 @@ macro cli.write.string string*, max_length {
   local cli_read_line_end:
   mov rax, buffer
   pop r14 r15
-  ret
 }
 
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -58,7 +64,6 @@ macro file.read.char filedescriptor* {
   mov rdi, filedescriptor
   syscall
   mov rax, rsi
-  ret
 }
 macro file.read.line filedescriptor*, buffer*, max_length {
   push r15
@@ -74,7 +79,6 @@ macro file.read.line filedescriptor*, buffer*, max_length {
   local cli_read_line_end:
   mov rax, buffer
   pop r15
-  ret
 }
 macro file.read filedescriptor*, buffer*, max_length {
   push r15
@@ -90,15 +94,14 @@ macro file.read filedescriptor*, buffer*, max_length {
   local read_file_end:
   mov rax, buffer
   pop r15
-  ret
 }
 
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-macro file.write.byte filedescriptor*, bytetowrite* {
+macro file.write.char filedescriptor*, chartowrite* {
   mov rax, 1
   mov rdx, 1
   mov rdi, filedescriptor
-  mov rsi, bytetowrite
+  mov rsi, chartowrite
   syscall
 }
 
