@@ -9,6 +9,14 @@ $6 fix r13
 $7 fix r14
 $8 fix r15
 
+macro stack [rxx] {
+  push rxx
+}
+
+macro unstack [rxx] {
+  pop rxx
+}
+
 macro return variable {
   mov variable, rax
 }
