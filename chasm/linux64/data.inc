@@ -1,7 +1,7 @@
 macro data.string name*, string* {
 segment readable writeable
     name dq string, 0
-    name.length equ $ - string
+    name.length fix $ - string
 segment readable executable
 }
 
