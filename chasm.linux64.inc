@@ -14,4 +14,22 @@ include 'chasm/linux64/errors.inc'
 include 'chasm/linux64/threads.inc'
 include 'chasm/linux64/utf8.inc'
 
+global main
+chasm.start fix main:
+
+postpone {
+  mov rax, 60
+  mov rdi, 0
+  syscall
+}
+
 segment readable executable
+
+macro starter {
+  if used main {
+  ;-----------------------  
+  } else {
+    main:
+  }
+}
+starter
