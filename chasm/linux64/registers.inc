@@ -14,7 +14,7 @@ macro stack [rxx] {
 }
 
 macro unstack [rxx] {
-  pop rxx
+  reverse pop rxx
 }
 
 macro return variable {
