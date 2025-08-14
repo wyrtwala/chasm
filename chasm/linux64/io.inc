@@ -1,5 +1,5 @@
 macro cli.read.char buffer{
-  stack rbp rax rdx rdi  rsi
+  stack rbp rax rdx rdi rsi
   mov rbp, rsp
   xor rax, rax                           ; read
   mov rdx, 1                             ; one char (32bits?)
@@ -13,18 +13,19 @@ macro cli.read.char buffer{
 macro cli.read.line: buffer*, max_length=1024 {
   stack rbp rax rdx rdi rsi r15          ; save rxx in case they
   mov rbp, rsp                           ; are being used
+  local cli_read_line_loop cli_read_line_end
   xor rax, rax                           ; read
   mov rdx, 1                             ; one char (32bits?)
   xor rdi, rdi                           ; stdin
   xor r15, r15                           ; counter
-  local cli_read_line_loop:              ; loop back label
+cli_read_line_loop:                      ; loop back label
   lea rsi, [buffer + r15]                ; read buffer (check syntax)
   cmp r15, max_length                    ; check length
   jge cli_read_line_end                  ; end macro if too long
   syscall
   cmp rsi, 10                            ; check for line feed
   jne cli_read_line_loop                 ; repeat
-  local cli_read_line_end:               ; cancel label
+cli_read_line_end:                       ; cancel label
   mov rsp, rbp
   unstack rbp rax rdx rdi rsi r15
 }  
