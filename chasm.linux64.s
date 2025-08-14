@@ -1,4 +1,4 @@
-format ELF64 executable 3
+format elf64 executable 3
 
 include 'chasm/linux64/registers.inc'
 include 'chasm/linux64/data.inc'
