@@ -1,26 +1,27 @@
 macro io.read.char fd*, buffer* {
-  stack rbp rax rdx rdi rsi
+  stack    rbp rax rdx rdi rsi
   xor rax, rax                           ; read
   mov rdx, 1                             ; one char (32bits?)
   xor rdi, fd                            ; where from
   lea rsi, [buffer]                      ; read buffer
   syscall   
-  unstack rbp rax rdx rdi rsi
+  unstack  rbp rax rdx rdi rsi
 }  
 
 macro io.write.char fd*, buffer* {
-  stack rbp, rax, rdi, rsi, rdx
+  stack    rbp, rax, rdi, rsi, rdx
   mov rax, 1                      ; write
   mov rdi, fd                     ; where
   mov rsi, chartowrite            ; load char (check syntax)
   mov rdx, 1                      ; one char (32bits?)
   syscall
-  unstack rbp, rax, rdi, rsi, rdx
+  unstack  rbp, rax, rdi, rsi, rdx
 }
 
 macro io.read.line: fd* ,buffer*, max_length=1024 {
-  stack rbp rax rdx rdi rsi r15          ; save rxx in case already used
-  local cli_read_line_loop cli_read_line_end
+  stack    rbp rax rdx rdi rsi r15       ; save rxx in case already used
+  local    cli_read_line_loop 
+  local    cli_read_line_end
   xor rax, rax                           ; read
   mov rdx, 1                             ; one char (32bits?)
   xor rdi, fd                            ; where from
@@ -28,27 +29,26 @@ macro io.read.line: fd* ,buffer*, max_length=1024 {
 cli_read_line_loop:                      ; loop back label
   lea rsi, [buffer + r15]                ; read buffer (check syntax)
   cmp r15, max_length                    ; check length
-  jge cli_read_line_end                  ; end macro if too long
+  jge      cli_read_line_end             ; end macro if too long
   syscall
   cmp rsi, 10                            ; check for line feed
-  jne cli_read_line_loop                 ; repeat
+  jne      cli_read_line_loop            ; repeat
 cli_read_line_end:                       ; cancel label
-  unstack rbp, rax, rdx, rdi, rsi, r15
+  unstack  rbp, rax, rdx, rdi, rsi, r15
 }  
 
 io.write fix sys.write
-
 io.file.read fix sys.mmap
 
 macro io.file.create filename* {
-  stack rbp, rdi, rsi
+  stack    rbp, rdi, rsi
   mov rbp, rsp
   mov rax, 2
   mov rdi, filename
   mov rsi, 33282
   syscall
   mov rsp, rbp
-  unstack rbp, rdi, rsi
+  unstack  rbp, rdi, rsi
 }
 
 io.file.open fix sys.open
