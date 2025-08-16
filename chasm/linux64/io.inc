@@ -20,8 +20,6 @@ macro io.write.char fd*, buffer* {
 
 macro io.read.line: fd* ,buffer*, max_length=1024 {
   stack    rbp rax rdx rdi rsi r15       ; save rxx in case already used
-  local    cli_read_line_loop 
-  local    cli_read_line_end
   xor rax, rax                           ; read
   mov rdx, 1                             ; one char (32bits?)
   xor rdi, fd                            ; where from
