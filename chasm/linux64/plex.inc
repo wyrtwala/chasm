@@ -1,3 +1,3 @@
 plex fix struc
 
-end-plex fix end/ struc
+plex.end fix end\ struc
