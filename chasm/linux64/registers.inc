@@ -10,8 +10,8 @@ $7 fix r14
 $8 fix r15
 
 macro stack [rxx] {
-  common mov rbp, rsp
   forward push rxx
+  common mov rbp, rsp
 }
 
 macro unstack [rxx] {
