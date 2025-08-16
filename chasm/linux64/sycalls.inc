@@ -11,61 +11,135 @@ sys.arg6 fix rd9
 ; ZERO
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 macro sys.read fd*, buffer*, count* {
-  stack rbp, rdi, rsi, rdx
-  mov rax, 0
-  mov sys.arg1, fd
-  mov sys.arg2, buffer
-  mov sys.arg3, count
+  stack   rbp, rdi, rsi, rdx
+  mov rax,      0           ; read
+  mov sys.arg1, fd          ; filedescriptor
+  mov sys.arg2, buffer      ; buffer
+  mov sys.arg3, count       ; count
   syscall
-  unstack rbp, rd,i rsi, rdx
+  unstack rbp, rdi, rsi, rdx
 }
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; ONE
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 macro sys.write fd*, buffer*, count* {
-  stack rbp, rdi, rsi, rdx
-  mov rax, 1
-  mov sys.arg1, fd
-  mov sys.arg2, buffer                             ; might have to be lea
-  mov sys.arg3, count
+  stack   rbp, rdi, rsi, rdx
+  mov rax,      1            ; write
+  mov sys.arg1, fd           ; filedescriptor
+  mov sys.arg2, buffer       ; buffer                  ; might have to be [lea]
+  mov sys.arg3, count        ; count
   syscall
-  unstack rbp, rd,i rsi, rdx
+  unstack rbp, rdi, rsi, rdx
 }
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; TWO
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-macro sys.open filename*, flags=514, mode {
-  stack rbp, rdi, rsi, rdx
-  mov rax, 2
-  mov sys.arg1, fd
-  mov sys.arg2, buffer
+macro sys.open filename*, flag=514, mode {
+  stack   rbp, rdi, rsi, rdx
+  mov rax,      2           ; open
+  mov sys.arg1, fd          ; file descriptor
+  mov sys.arg2, flag        ; flags
   if used mode {
-  mov sys.arg3, count
-  }                                            ; check syntax
+  mov sys.arg3, mode        ; mode
+  }                         ; check syntax
   syscall
-  unstack rbp, rd,i rsi, rdx
+  unstack rbp, rdi, rsi, rdx
 }
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; THREE
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 macro sys.close fd* {
-  stack rbp, rdi
-  mov rax, 3
-  mov rdi, fd
+  stack   rbp, rdi
+  mov rax,      3          ; close
+  mov sys.arg1, fd         ; filedescriptor
   syscall
   unstack rbp, rdi
 }
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; EIGHT
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+macro sys.lseek fd*, whence*, offset=0 {
+  stack   rbp, rdi, rsi, rdx
+  mov rax,      8            ; lseek
+  mov sys.arg1, fd           ; filedescriptor
+  mov sys.arg2, offset       ; offset
+  mov sys.arg3, whence       ; whence [0-begining, 1-current, 2-end]
+  syscall
+  unstack rbp, rdi, rsi, rdx
+}
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; NINE
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+macro sys.mmap size* {
+  stack   rbp, rdi, rsi, rdx, r10, r8, r9
+  mov rax,      9          ; mmap
+  mov sys.arg1, 0          ; allocate wherever
+  mov sys.arg2, size * 64  ; size in cache lines
+  mov sys.arg3, 3          ; read and write
+  mov sys.arg4, 33         ; anonymous and shared (for threads)
+  mov sys.arg5,  0         ; offset
+  mov sys.arg6, -1         ; don't allocate in file
+  syscall
+  unstack rbp, rdi, rsi, rdx, r10, r8, r9
 
+}
+macro sys.mmap.file fd*, size* {
+  stack   rbp, rdi, rsi, rdx, r10, r8, r9
+  mov rax,      9          ; mmap
+  mov sys.arg1, 0          ; allocate wherever
+  mov sys.arg2, size       ; file size
+  mov sys.arg3, 3          ; read and write
+  mov sys.arg4, 33         ; anonymous and shared (for threads)
+  mov sys.arg5,  0         ; offset
+  mov sys.arg6, fd         ; file descriptor
+  syscall
+  unstack rbp, rdi, rsi, rdx, r10, r8, r9
+}
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; munmap
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+macro heap.release address*, size* {
+  stack   rbp, rdi, rsi
+  mov rax,      11        ; munmap
+  mov sys.arg1, address   ; address
+  mov sys.arg2, size * 64 ; size in cache lines
+  syscall
+  unstack rbp, rdi, rsi
+}
+macro heap.release.file address*, size* {
+  stack   rbp, rdi, rsi
+  mov rax,       11       ; munmap
+  mov sys.arg1, address   ; address
+  mov sys.arg2, size      ; file size
+  syscall
+  unstack rbp, rdi, rsi
+}
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; TWENTY-FIVE
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+macro sys.mmap address1*, size1*, size2*, maymove=1 {
+  stack   rbp, rdi, rsi, rdx, r10
+  mov rax,      25         ; mremap
+  mov sys.arg1, address1   ; original address
+  mov sys.arg2, size1      ; original size
+  mov sys.arg3, size2      ; new size
+  mov sys.arg4, maymove    ; may move memory if too large
+  syscall
+  unstack rbp, rdi, rsi, rdx, r10
+}
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; SYSCALL
+;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 marcro sys.call whichcall*, first, second, third, fourth, fifth, sixth {
-  stack rbp, rdi, rsi, rdx, r10, r8, r9
-  mov rax, whichcall
+  stack   rbp, rdi, rsi, rdx, r10, r8, r9
+  mov rax,      whichcall
   mov sys.arg1, first
   mov sys.arg2, second
   mov sys.arg3, third
   mov sys.arg4, fourth
   mov sys.arg5, fifth
   mov sys.arg6, sixth
-  stack rbp, rdi, rsi, rdx, r10, r8, r9
+  unstack rbp, rdi, rsi, rdx, r10, r8, r9
 }
 
 
