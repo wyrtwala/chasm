@@ -26,14 +26,14 @@ macro io.read.line: fd* ,buffer*, max_length=1024 {
   mov rdx, 1                             ; one char (32bits?)
   xor rdi, fd                            ; where from
   xor r15, r15                           ; counter
-cli_read_line_loop:                      ; loop back label
+@@:                                      ; loop back label
   lea rsi, [buffer + r15]                ; read buffer (check syntax)
   cmp r15, max_length                    ; check length
-  jge      cli_read_line_end             ; end macro if too long
+  jge      @f                            ; end macro if too long
   syscall
   cmp rsi, 10                            ; check for line feed
-  jne      cli_read_line_loop            ; repeat
-cli_read_line_end:                       ; cancel label
+  jne      @b                            ; repeat
+@@:                                      ; cancel label
   unstack  rbp, rax, rdx, rdi, rsi, r15
 }  
 
