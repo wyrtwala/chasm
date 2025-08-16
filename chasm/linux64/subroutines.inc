@@ -1,11 +1,9 @@
 macro sub_routine name* {
-name:
-    push ebp r8 r9 r10 r11 r12 r13 r14 r15
-    mov ebp, esp
+name#:
+    stack rbp, r8, r9, r10, r11, r12, r13, r14, r15
 }
 
 macro end_routine* {
-    mov esp, ebp
-    pop ebp r8 r9 r10 r11 r12 r13 r14 r15
+    unstack rbp, r8, r9, r10, r11, r12, r13, r14, r15
     ret
 }
