@@ -1,9 +1,9 @@
-macro threads.fork {
+macro thread.fork {
   mov rax, 57
   syscall
 } 
 
-macro threads.pipe pipename* {
+macro thread.pipe pipename* {
 segment readable writeable
   pipename dq 0, 0
 segment readable executable
@@ -12,21 +12,21 @@ segment readable executable
   syscall
 }
 
-macro threads.kill pid* {
+macro thread.kill pid* {
   mov rax, 62
   mov rdi, pid
   mov rsi, 15
   syscall
 }
 
-macro threads.murder pid* {
+macro thread.destroy pid* {
   mov rax, 62
   mov rdi, pid
   mov rsi 9
   syscall
 }
 
-macro threads.wait pid* {
+macro thread.wait pid* {
   mov rax, 247
   mov rdi, -1
   mov rsi, pid
