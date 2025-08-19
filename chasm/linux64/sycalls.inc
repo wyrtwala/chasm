@@ -98,7 +98,7 @@ macro sys.mmap.file fd*, size* {
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; munmap
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-macro heap.release address*, size* {
+macro sys.munmap address*, size* {
   stack   rbp, rdi, rsi
   mov rax,      11        ; munmap
   mov sys.arg1, address   ; address
@@ -106,7 +106,7 @@ macro heap.release address*, size* {
   syscall
   unstack rbp, rdi, rsi
 }
-macro heap.release.file address*, size* {
+macro heap.munmap.file address*, size* {
   stack   rbp, rdi, rsi
   mov rax,       11       ; munmap
   mov sys.arg1, address   ; address
@@ -117,7 +117,7 @@ macro heap.release.file address*, size* {
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ; TWENTY-FIVE
 ;--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-macro sys.mmap address1*, size1*, size2*, maymove=1 {
+macro sys.mremap address1*, size1*, size2*, maymove=1 {
   stack   rbp, rdi, rsi, rdx, r10
   mov rax,      25         ; mremap
   mov sys.arg1, address1   ; original address
