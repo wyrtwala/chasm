@@ -1,5 +1,4 @@
-format PE64 
-
+include 'win64axp.inc'
 include 'windows64/registers.inc'
 
 entry main
